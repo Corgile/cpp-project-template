@@ -4,4 +4,4 @@
 
 ## Features
 
-请阅读 `/cmake/StandardSettings.cmake`
+请阅读 `/cmake/Settings.cmake`

@@ -2,11 +2,12 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.20)
 # Project details
 PROJECT("Project" VERSION 0.1.0 LANGUAGES CXX)
 SET(CMAKE_CXX_STANDARD 20)
+
 SET(PROJECT_SHORT_NAME "PP")
-# Set project options
-INCLUDE(cmake/Utils.cmake)
-INCLUDE(cmake/Settings.cmake)
-INCLUDE(cmake/Analyzers.cmake)
+
+INCLUDE(${PROJECT_SOURCE_DIR}/cmake/StartUp.cmake)
+INCLUDE(${PROJECT_SOURCE_DIR}/cmake/Settings.cmake)
+
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Debug")
 ENDIF()
@@ -110,16 +111,11 @@ ELSE()
     TARGET_COMPILE_FEATURES(${PROJECT_NAME}_LIB PUBLIC cxx_std_17)
   ENDIF()
 ENDIF()
+
 INCLUDE(cmake/CompilerWarnings.cmake)
 SET_PROJECT_WARNINGS(${PROJECT_NAME})
 
 VERBOSE_MESSAGE("添加 C++${CMAKE_CXX_STANDARD} 的编译警告选项.")
-
-#
-# Enable Doxygen
-#
-
-INCLUDE(cmake/Doxygen.cmake)
 
 SET(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 

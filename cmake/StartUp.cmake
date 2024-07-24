@@ -1,0 +1,6 @@
+INCLUDE(${PROJECT_SOURCE_DIR}/cmake/internal/Utils.cmake)
+IF("x${PROJECT_SCRIPTS_DIR}" STREQUAL "x")
+  SET(PROJECT_SCRIPTS_DIR ${PROJECT_SOURCE_DIR}/scripts)
+  VERBOSE_MESSAGE("scripts 目录: ${PROJECT_SCRIPTS_DIR}")
+ENDIF()
+# 可以在这里配置拉取依赖 或者执行一些命令
