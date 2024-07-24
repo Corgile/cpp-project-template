@@ -4,13 +4,27 @@ Language: Cpp
 BasedOnStyle: LLVM
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
+AllowShortLambdasOnASingleLine: Inline
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: Inline
+ReferenceAlignment: Left
+PointerAlignment: Left
 AlignOperands: false
-AlignTrailingComments: false
+AlignTrailingComments: true
+AlignArrayOfStructures: Left
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: false
+  AlignCaseColons: true
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: Left
 AllowShortIfStatementsOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
 AllowShortBlocksOnASingleLine: Empty
 AlwaysBreakTemplateDeclarations: Yes
-BraceWrapping: 
+BraceWrapping:
   AfterCaseLabel: false
   AfterClass: false
   AfterControlStatement: false
@@ -33,14 +47,13 @@ BreakConstructorInitializersBeforeComma: false
 ColumnLimit: 120
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ContinuationIndentWidth: 2
-IncludeCategories: 
-  - Regex: '^<.*'
-    Priority: 1
-  - Regex: '^".*'
+IncludeCategories:
+  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
     Priority: 2
-  - Regex: '.*'
+  - Regex: '^(<|"(gtest|isl|json)/)'
     Priority: 3
 IncludeIsMainRegex: '([-_](test|unittest))?$'
+InsertNewlineAtEOF: true
 MacroBlockBegin: ''
 MacroBlockEnd: ''
 SpaceInEmptyParentheses: false

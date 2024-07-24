@@ -2,8 +2,14 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.20)
 # Project details
 PROJECT("Project" VERSION 0.1.0 LANGUAGES CXX)
 SET(CMAKE_CXX_STANDARD 20)
+SET(STANDARD_FEATURE cxx_std_${CMAKE_CXX_STANDARD})
 
+# a short name that may be used for LOG_LEVEL macro
+# see /cmake/internal/LogLevel.cmake
 SET(PROJECT_SHORT_NAME "PP")
+
+# Find all headers and implementation files
+INCLUDE(cmake/SourcesAndHeaders.cmake)
 
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/StartUp.cmake)
 INCLUDE(${PROJECT_SOURCE_DIR}/cmake/Settings.cmake)
@@ -33,50 +39,27 @@ IF(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
   MESSAGE(FATAL_ERROR "不支持在代码路径下生成编译目标")
 ENDIF()
 # Create library, setup header and source files
-# Find all headers and implementation files
-INCLUDE(cmake/SourcesAndHeaders.cmake)
+
 
 IF(${PROJECT_NAME}_BUILD_EXECUTABLE)
   ADD_EXECUTABLE(${PROJECT_NAME} ${exe_sources})
-  IF(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    VERBOSE_MESSAGE("添加源文件:")
-    FOREACH(source IN LISTS exe_sources)
-      VERBOSE_MESSAGE("* ${source}")
-    ENDFOREACH()
-  ENDIF()
+  VERBOSE_MESSAGE("添加源文件:")
+  VERBOSE_MESSAGE("  + " ${lib_sources})
   IF(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    ADD_LIBRARY(${PROJECT_NAME}_LIB ${headers} ${sources})
-    IF(${PROJECT_NAME}_VERBOSE_OUTPUT)
-      VERBOSE_MESSAGE("添加头文件:")
-      FOREACH(header IN LISTS headers)
-        VERBOSE_MESSAGE("* ${header}")
-      ENDFOREACH()
-    ENDIF()
+    ADD_LIBRARY(${PROJECT_NAME}_LIB ${headers} ${lib_sources})
+    VERBOSE_MESSAGE("添加头文件:" "")
+    VERBOSE_MESSAGE(${header} "  + ")
   ENDIF()
 ELSEIF(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
   ADD_LIBRARY(${PROJECT_NAME} INTERFACE)
-  IF(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    VERBOSE_MESSAGE("添加头文件:")
-    FOREACH(header IN LIST headers)
-      VERBOSE_MESSAGE("* ${header}")
-    ENDFOREACH()
-  ENDIF()
+  VERBOSE_MESSAGE("添加头文件:")
+  VERBOSE_MESSAGE("  + " ${headers})
 ELSE()
-  ADD_LIBRARY(
-      ${PROJECT_NAME}
-      ${headers}
-      ${sources}
-  )
-  IF(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    VERBOSE_MESSAGE("添加源文件:")
-    FOREACH(source IN LISTS sources)
-      VERBOSE_MESSAGE("* ${source}")
-    ENDFOREACH()
-    VERBOSE_MESSAGE("添加头文件:")
-    FOREACH(header IN LISTS headers)
-      VERBOSE_MESSAGE("* ${header}")
-    ENDFOREACH()
-  ENDIF()
+  ADD_LIBRARY(${PROJECT_NAME} ${headers} ${lib_sources})
+  VERBOSE_MESSAGE("添加源文件:")
+  VERBOSE_MESSAGE("  + " ${lib_sources})
+  VERBOSE_MESSAGE("添加头文件:")
+  VERBOSE_MESSAGE("  + " ${headers})
 ENDIF()
 
 SET_TARGET_PROPERTIES(
@@ -92,34 +75,27 @@ IF(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
       PROPERTIES
       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-      OUTPUT_NAME ${PROJECT_NAME}
-  )
+      OUTPUT_NAME ${PROJECT_NAME})
 ENDIF()
 
-VERBOSE_MESSAGE("已添加全部头文件和源文件.")
-
+VERBOSE_MESSAGE("${N}<<< OK${G}.\n")
 #
 # Set the project standard and warnings
 #
-
 IF(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  TARGET_COMPILE_FEATURES(${PROJECT_NAME} INTERFACE cxx_std_17)
+  TARGET_COMPILE_FEATURES(${PROJECT_NAME} INTERFACE ${STANDARD_FEATURE})
 ELSE()
-  TARGET_COMPILE_FEATURES(${PROJECT_NAME} PUBLIC cxx_std_17)
-
+  TARGET_COMPILE_FEATURES(${PROJECT_NAME} PUBLIC ${STANDARD_FEATURE})
   IF(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    TARGET_COMPILE_FEATURES(${PROJECT_NAME}_LIB PUBLIC cxx_std_17)
+    TARGET_COMPILE_FEATURES(${PROJECT_NAME}_LIB PUBLIC ${STANDARD_FEATURE})
   ENDIF()
 ENDIF()
 
 INCLUDE(cmake/CompilerWarnings.cmake)
 SET_PROJECT_WARNINGS(${PROJECT_NAME})
 
-VERBOSE_MESSAGE("添加 C++${CMAKE_CXX_STANDARD} 的编译警告选项.")
-
 SET(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
-VERBOSE_MESSAGE("已添加了所需的全部依赖.")
 # Set the build/user include directories
 # Allow usage of header files in the `source` directory, but only for utilities
 IF(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
@@ -150,7 +126,7 @@ ELSE()
   ENDIF()
 ENDIF()
 
-VERBOSE_MESSAGE("完成 include 目录配置.")
+VERBOSE_MESSAGE("${N}<<< OK${G}: TARGET_INCLUDE_DIRECTORIES 目录配置.")
 # Provide alias to library for
 IF(${PROJECT_NAME}_BUILD_EXECUTABLE)
   ADD_EXECUTABLE(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
@@ -160,7 +136,7 @@ ENDIF()
 
 VERBOSE_MESSAGE("项目名: ${PROJECT_NAME}::${PROJECT_NAME}.")
 # Format the project using the `clang-format` target (i.e: cmake --build build --target clang-format)
-ADD_CLANG_FORMAT_TARGET()
+
 # Install library for easy downstream inclusion
 INCLUDE(GNUInstallDirs)
 INSTALL(
@@ -219,7 +195,7 @@ INSTALL(
     include
 )
 
-VERBOSE_MESSAGE("构建 install 目标完成. 安装命令:
+VERBOSE_MESSAGE("${N}<<< OK${G}: 构建 install. 安装命令:
        `cmake --build <build_directory> --target install --config <build_config>`.")
 
 #
@@ -273,6 +249,6 @@ ENDIF()
 
 IF(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   ENABLE_TESTING()
-  VERBOSE_MESSAGE("构建单元测试.")
+  VERBOSE_MESSAGE("${N}<<< OK${G}: 构建单元测试.")
   ADD_SUBDIRECTORY(test)
 ENDIF()

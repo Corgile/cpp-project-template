@@ -1,3 +1,5 @@
 #include "project/tmp.hpp"
 
-int tmp::add(const int aaa, const int bbb) { return aaa + bbb; }
+auto tmp::add(const int a, const int b) -> int {
+  return a + b;
+}

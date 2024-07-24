@@ -1,16 +1,15 @@
-set(sources
-    source/tmp.cpp
+set(lib_sources
+		source/tmp.cpp
 )
 
 set(exe_sources
 		source/main.cpp
-		${sources}
+		${lib_sources}
 )
 
 set(headers
-    include/project/tmp.hpp
+		include/project/tmp.hpp
 )
-
-set(test_sources
-  source/tmp_test.cpp
+FILE(GLOB test_sources
+		 ${PROJECT_SOURCE_DIR}/test/*/*.cpp
 )

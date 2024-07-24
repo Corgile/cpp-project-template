@@ -28,7 +28,7 @@ foreach(file ${test_sources})
   if (${CMAKE_PROJECT_NAME}_ENABLE_CODE_COVERAGE)
     target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
     target_link_options(${CMAKE_PROJECT_NAME} PUBLIC -fprofile-arcs -ftest-coverage)
-    verbose_message("Code coverage is enabled and provided with GCC.")
+    VERBOSE_MESSAGE("当前使用GCC的代码覆盖检测.")
   endif()
 
   #
@@ -61,7 +61,7 @@ foreach(file ${test_sources})
         ${${CMAKE_PROJECT_NAME}_TEST_LIB}
     )
   else()
-    message(FATAL_ERROR "Unknown testing library. Please setup your desired unit testing library by using `target_link_libraries`.")  
+    MESSAGE(FATAL_ERROR "不使用Catch2或GTest那就自己配吧.")
   endif()
 
   #
