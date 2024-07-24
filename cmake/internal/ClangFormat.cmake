@@ -2,6 +2,8 @@ IF(${PROJECT_NAME}_ENABLE_CLANG_FORMAT)
   INCLUDE(${PROJECT_SOURCE_DIR}/cmake/internal/VARS.cmake)
   SET(CLANG_FORMAT_SEARCH_NAME clang-format)
   IF(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # 如果你用了Clang, 那么tidy和format的版本要和clang的版本一致
+    # 否则有些 format/tidy 规则会出现兼容问题
     IF(CMAKE_CXX_COMPILER_VERSION MATCHES "^14.")
       SET(CLANG_FORMAT_SEARCH_NAME clang-format-14)
     ELSEIF(CMAKE_CXX_COMPILER_VERSION MATCHES "^15.")
